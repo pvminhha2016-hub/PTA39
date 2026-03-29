@@ -1,19 +1,31 @@
-def kiem_tra_thoi_gian(t):
+#input
+input_time = input(" ")
+def split_time(input_time):
     try:
-        parts = t.split(":")
-        if len(parts) != 3:
-            return "Không hợp lệ"
-
-        h, m, s = map(int, parts)
-
-        if 0 <= h <= 23 and 0 <= m <= 59 and 0 <= s <= 59:
-            return "Hợp lệ"
-        else:
-            return "Không hợp lệ"
+        time_list = input_time.split(" : ")
+        gio = int(time_list[1])
+        phut = int(time_list[2])
+        giay = int(time_list[3])
+        return gio, phut, giay
     except:
-        return "Không hợp lệ"
+        print(" Invalid, time for mat")
+        return None
+def validate_time(gio = None, phut = None, giay = None):
+        if gio == None or phut == None or giay == None:
+            return "Không hợp lệ"
+        if gio < 0 or gio > 23:
+            return "Không hợp lệ"
+        if phut < 0 or phut > 59:
+            return "Không hợp lệ"
+        if giay < 0 or giay > 59:
+            return "Không hợp lệ"
+        
+        return "hợp lệ"
+        
+print(validate_time(*split_time(input_time)))
+    
+    
+    
+    
+            
 
-# Test thử
-print(kiem_tra_thoi_gian("02:30:35"))  # Hợp lệ
-print(kiem_tra_thoi_gian("23:54:00"))  # Hợp lệ
-print(kiem_tra_thoi_gian("24:00:00"))  # Không hợp lệ
