@@ -1,0 +1,19 @@
+def kiem_tra_thoi_gian(t):
+    try:
+        parts = t.split(":")
+        if len(parts) != 3:
+            return "Không hợp lệ"
+
+        h, m, s = map(int, parts)
+
+        if 0 <= h <= 23 and 0 <= m <= 59 and 0 <= s <= 59:
+            return "Hợp lệ"
+        else:
+            return "Không hợp lệ"
+    except:
+        return "Không hợp lệ"
+
+# Test thử
+print(kiem_tra_thoi_gian("02:30:35"))  # Hợp lệ
+print(kiem_tra_thoi_gian("23:54:00"))  # Hợp lệ
+print(kiem_tra_thoi_gian("24:00:00"))  # Không hợp lệ
