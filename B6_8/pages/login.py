@@ -20,10 +20,10 @@ class loginPage(QMainWindow):
         uic.loadUI(ui_path, self)
 
     #bat SK cho nut bam
-    self.login.click.connect(self.handle_login)
-    self.nav_register.click.connect(self. goto_register)
+        self.login.click.connect(self.handle_login)
+        self.nav_register.click.connect(self. goto_register)
     #chay app
-    self.show()
+        self.show()
 
     #--------------xu lis SK-------------------
     def handle_login(self):
@@ -58,7 +58,7 @@ class loginPage(QMainWindow):
 
 
     
-def show_message(self):
+    def show_message(self):
         # Khởi tạo hộp thoại thông báo
         msg = QMessageBox()
         msg.setWindowTitle("Thông báo")
