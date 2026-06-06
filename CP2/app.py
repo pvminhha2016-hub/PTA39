@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget
 from home import HomeWidget
-from details import DetailsWidget
+from details.ui import DetailsWidget
 
 class MainApplication(QMainWindow):
     def __init__(self):

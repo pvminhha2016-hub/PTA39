@@ -1,72 +1,85 @@
+
+from PyQt6.QtWidgets import QApplication, QMainWindow
+import sys
+from PyQt6 import uic
 import os
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, pyqtSignal
-from PyQt5 import uic
+import QStacked
 
-class DetailsWidget(QWidget):
-    # Tạo tín hiệu gửi dữ liệu (index_thư_mục, tiêu_đề, nội_dung) về trang chủ khi nhấn Close
-    note_saved = pyqtSignal(int, str, str)
-    # Tín hiệu khi người dùng muốn quay lại trang chủ không lưu
-    back_to_home = pyqtSignal()
 
-    def __init__(self, parent=None):
-        super(DetailsWidget, self).__init__(parent)
-        
-        # Tải file UI bố cục tự động của bạn
-        ui_path = os.path.join(os.path.dirname(__file__), 'main_layout.ui')
-        uic.loadUi(ui_path, self)
-        
-        self.current_note_index = -1 # Lưu vị trí ghi chú đang sửa (-1 nghĩa là tạo mới)
-        
-        self.setup_icons()
-        self.connect_events()
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-    def setup_icons(self):
-        # Định dạng nút phẳng trong suốt cho các nút tính năng
-        icon_button_style = """
-            QPushButton {
-                background-color: transparent;
-                border: none;
-                border-radius: 14px;
-                padding: 6px;
-            }
-            QPushButton:hover { background-color: rgba(0, 0, 0, 0.08); }
-            QPushButton:pressed { background-color: rgba(0, 0, 0, 0.15); }
-        """
-        # Ánh xạ các nút bấm với file ảnh icon tương ứng
-        button_icons = {
-            self.pushButton_4: "image_8d3521.png",       # Chuông
-            self.pushButton_5: "icon_collaborator.png",  # Người cộng tác
-            self.pushButton_6: "icon_palette.png",       # Bảng màu
-            self.pushButton_7: "image_8d353d.png",       # Hình ảnh
-            self.pushButton_8: "icon_archive.png"        # Lưu trữ
-        }
+        self.setWindowTitle("Notes")
+        self.resize(500, 300)
 
-        for button, icon_file in button_icons.items():
-            if button is not None:
-                button.setText("") 
-                if os.path.exists(icon_file):
-                    button.setIcon(QIcon(icon_file))
-                button.setIconSize(QSize(20, 20))
-                button.setStyleSheet(icon_button_style)
+        self.notes = ["Ghi chú đầu tiên"]
 
-    def connect_events(self):
-        # Xử lý sự kiện nút "close" (Lưu dữ liệu thay đổi và chuyển trang)
-        self.pushButton.clicked.connect(self.save_and_close)
-        # Xử lý sự kiện nút "X" trên góc phải (Quay về không lưu)
-        self.pushButton_10.clicked.connect(self.back_to_home.emit)
+        # Stack chứa các trang
+        self.stack = QStackedWidget()
+        self.setCentralWidget(self.stack)
 
-    def set_note_data(self, index, title, content):
-        """Đổ dữ liệu ghi chú cũ lên form để chỉnh sửa"""
-        self.current_note_index = index
-        self.label_7.setText(title)           # Thay đổi nội dung tiêu đề label_7
-        self.textEdit.setPlainText(content)   # Thay đổi nội dung ô nhập textEdit
+        self.create_home_page()
+        self.create_detail_page()
 
-    def save_and_close(self):
-        # Lấy nội dung văn bản mới sau khi người dùng đã thay đổi
-        updated_title = self.label_7.text()
-        updated_content = self.textEdit.toPlainText()
-        
-        # Phát tín hiệu gửi dữ liệu đã thay đổi đi
-        self.note_saved.emit(self.current_note_index, updated_title, updated_content)
+        self.stack.setCurrentWidget(self.home_page)
+
+    def create_home_page(self):
+        self.home_page = QWidget()
+
+        layout = QVBoxLayout()
+
+        self.listWidget = QListWidget()
+        self.listWidget.addItems(self.notes)
+
+        btnOpen = QPushButton("Xem ghi chú")
+        btnOpen.clicked.connect(self.open_note)
+
+        layout.addWidget(self.listWidget)
+        layout.addWidget(btnOpen)
+
+        self.home_page.setLayout(layout)
+        self.stack.addWidget(self.home_page)
+
+    def create_detail_page(self):
+        self.detail_page = QWidget()
+
+        layout = QVBoxLayout()
+
+        self.textEdit = QTextEdit()
+
+        btnSave = QPushButton("Lưu")
+        btnBack = QPushButton("Quay lại")
+
+        btnSave.clicked.connect(self.save_note)
+        btnBack.clicked.connect(self.go_home)
+
+        layout.addWidget(self.textEdit)
+        layout.addWidget(btnSave)
+        layout.addWidget(btnBack)
+
+        self.detail_page.setLayout(layout)
+        self.stack.addWidget(self.detail_page)
+
+    def open_note(self):
+        row = self.listWidget.currentRow()
+
+        if row >= 0:
+            self.current_row = row
+            self.textEdit.setText(self.notes[row])
+            self.stack.setCurrentWidget(self.detail_page)
+
+    def save_note(self):
+        self.notes[self.current_row] = self.textEdit.toPlainText()
+
+        self.listWidget.clear()
+        self.listWidget.addItems(self.notes)
+
+    def go_home(self):
+        self.stack.setCurrentWidget(self.home_page)
+
+
+app = QApplication(sys.argv)
+window = MainWindow()
+window.show()
+sys.exit(app.exec_())
