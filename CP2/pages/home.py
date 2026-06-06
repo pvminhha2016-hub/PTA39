@@ -8,14 +8,10 @@ class HomeWidget(QWidget):
 
         uic.loadUi("home.ui", self)
 
-        self.notes = [
-            "Nội dung ghi chú 1",
-            "Nội dung ghi chú 2",
-            "Nội dung ghi chú 3"
-        ]
+        self.notes = ["noi dung ghi chu1","noi dung ghi chu2","noi dung ghi chu3"]
 
-    def edit_note(self, index):
-        print(self.notes[index])
+    def xem(self, chi_so):
+        print(self.notes[chi_so])
 
-    def update_note(self, index, content):
-        self.notes[index] = content
+def sua(self, chi_so, noi_dung):
+    self.notes[chi_so] = noi_dung

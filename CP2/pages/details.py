@@ -1,85 +1,29 @@
-
 from PyQt6.QtWidgets import QApplication, QMainWindow
-import sys
 from PyQt6 import uic
-import os
-import QStacked
+import sys
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Notes")
-        self.resize(500, 300)
+        uic.loadUi("main.ui", self)
 
-        self.notes = ["Ghi chú đầu tiên"]
+        self.widget.hide()  
 
-        # Stack chứa các trang
-        self.stack = QStackedWidget()
-        self.setCentralWidget(self.stack)
+        self.pushButton_2.clicked.connect(self.mo_ghichu)
+        self.pushButton.clicked.connect(self.dong_ghichu)
 
-        self.create_home_page()
-        self.create_detail_page()
+    def mo_ghichu(self):
+        self.textEdit.setPlainText("day la ghi chu")
+        self.widget.show()  
 
-        self.stack.setCurrentWidget(self.home_page)
-
-    def create_home_page(self):
-        self.home_page = QWidget()
-
-        layout = QVBoxLayout()
-
-        self.listWidget = QListWidget()
-        self.listWidget.addItems(self.notes)
-
-        btnOpen = QPushButton("Xem ghi chú")
-        btnOpen.clicked.connect(self.open_note)
-
-        layout.addWidget(self.listWidget)
-        layout.addWidget(btnOpen)
-
-        self.home_page.setLayout(layout)
-        self.stack.addWidget(self.home_page)
-
-    def create_detail_page(self):
-        self.detail_page = QWidget()
-
-        layout = QVBoxLayout()
-
-        self.textEdit = QTextEdit()
-
-        btnSave = QPushButton("Lưu")
-        btnBack = QPushButton("Quay lại")
-
-        btnSave.clicked.connect(self.save_note)
-        btnBack.clicked.connect(self.go_home)
-
-        layout.addWidget(self.textEdit)
-        layout.addWidget(btnSave)
-        layout.addWidget(btnBack)
-
-        self.detail_page.setLayout(layout)
-        self.stack.addWidget(self.detail_page)
-
-    def open_note(self):
-        row = self.listWidget.currentRow()
-
-        if row >= 0:
-            self.current_row = row
-            self.textEdit.setText(self.notes[row])
-            self.stack.setCurrentWidget(self.detail_page)
-
-    def save_note(self):
-        self.notes[self.current_row] = self.textEdit.toPlainText()
-
-        self.listWidget.clear()
-        self.listWidget.addItems(self.notes)
-
-    def go_home(self):
-        self.stack.setCurrentWidget(self.home_page)
+    def dong_ghichu(self):
+        print(self.textEdit.toPlainText())   
+        self.widget.hide()  
 
 
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
-sys.exit(app.exec_())
+sys.exit(app.exec())
